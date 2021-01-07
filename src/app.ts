@@ -3,7 +3,20 @@ import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder } from "@babylonjs/core";
 
+import { TrailParticlesController } from "./TrailParticlesController";
+
 class App {
+    // General Entire Application
+    private _scene: Scene;
+    private _canvas: HTMLCanvasElement;
+    private _engine: Engine;
+
+    //Game State Related
+    private _trailvfx: TrailParticlesController;
+
+
+
+
     constructor() {
         // create the canvas html element and attach it to the webpage
         var canvas = document.createElement("canvas");
@@ -33,6 +46,12 @@ class App {
         engine.runRenderLoop(() => {
             scene.render();
         });
+
+        this._main();
+    }
+
+    private async _main(): Promise<void> {
+        this._trailvfx.playTrailEffect();
     }
 }
 new App();
