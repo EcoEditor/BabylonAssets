@@ -1,7 +1,7 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Scene, Vector3, Mesh, Texture, Color4, PBRMetallicRoughnessMaterial, MeshBuilder, ParticleSystem, Curve3, Path3D, Axis, Space, Material } from "@babylonjs/core";
+import { Scene, Logger,  Vector3, Mesh, Texture, Color4, PBRMetallicRoughnessMaterial, MeshBuilder, ParticleSystem, Curve3, Path3D, Axis, Space, Material } from "@babylonjs/core";
 
 export class TrailParticlesController {
     public scene: Scene;
@@ -37,7 +37,7 @@ export class TrailParticlesController {
         // Sphere
         const sphere = MeshBuilder.CreateSphere("sphere", {});
         // make sphere invisible
-        sphere.layerMask = 0;
+        //sphere.layerMask = 0;
 
         const particleSystem = new ParticleSystem("trail_particles", 1000, this.scene, null, true);
         particleSystem.particleTexture = new Texture("texture/vfx/Fire_SpriteSheet2_8x8", this.scene, true, false);
@@ -155,27 +155,28 @@ export class TrailParticlesController {
         this._sphere.position = startPosition;
 
         var pathPoints = spline.getPoints();
+        Logger.Warn("path point count" + pathPoints.length);
         var numberOfPoints = pathPoints.length;
         var path3d = new Path3D(pathPoints);
         var normals = path3d.getNormals();
 
-        var theta = Math.acos(Vector3.Dot(Axis.Z, normals[0]));
+        var theta = Math.acos(Vector3.Dot(Axis.Z, normals[i]));
 
         var i = 0;
         this.scene.registerAfterRender(function () {
-            this.sphere.position = pathPoints[i];
+            this._sphere.position = this.pathPoints[0];
 
             theta = Math.acos(Vector3.Dot(normals[i], normals[i + 1]));
             var direction = Vector3.Cross(normals[i], normals[i + 1]).y;
             var direction = direction / Math.abs(direction);
 
-            this.sphere.rotate(Axis.Y, direction * theta, Space.WORLD);
+            this._sphere.rotate(Axis.Y, direction * theta, Space.WORLD);
 
             i = (i + 1) % (numberOfPoints - 1);
         });
     }
 
-    public async playTrailEffect(): Promise<void> {
+    public async playTrailEffect() {
         this._defineParticleSystemTrail();
         this._defineSplinesTrails();
         await this._prepareTrailEffect(this._firstSpline, this._firstSplineMesh, this._firstSpawnPosition);

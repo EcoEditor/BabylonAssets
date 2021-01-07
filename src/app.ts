@@ -46,6 +46,7 @@ class App {
     }
 
     private async _main(): Promise<void> {
+        await this._goToStart();
         await this._trailvfx.playTrailEffect();
         Logger.Warn("Main is played"); 
     }
@@ -74,6 +75,10 @@ class App {
         document.body.appendChild(this._canvas);
 
         return this._canvas;
+    }
+
+    private async _goToStart(): Promise<void> {
+        this._trailvfx = new TrailParticlesController(this._scene);
     }
 }
 new App();
