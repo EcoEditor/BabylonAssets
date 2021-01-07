@@ -1,7 +1,7 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Scene, Vector3, Mesh, Texture, Color4, MeshBuilder, ParticleSystem, Curve3, Path3D, Axis, Space } from "@babylonjs/core";
+import { Scene, Vector3, Mesh, Texture, Color4, PBRMetallicRoughnessMaterial, MeshBuilder, ParticleSystem, Curve3, Path3D, Axis, Space, Material } from "@babylonjs/core";
 
 export class TrailParticlesController {
     public scene: Scene;
@@ -26,12 +26,14 @@ export class TrailParticlesController {
     constructor(scene: Scene) {
         this.scene = scene;
 
-        this._defineParticleSystemTrail();
-        this._defineSplinesTrails();
-        this._prepareTrailEffect(this._firstSpline, this._firstSplineMesh, this._firstSpawnPosition);
     }
 
     private _defineParticleSystemTrail(): void {
+        const ground = MeshBuilder.CreateGround("ground", { width: 25, height: 25 });
+        ground.material = new PBRMetallicRoughnessMaterial("groundMat", this.scene);
+        ground.material.backFaceCulling = false;
+        ground.position.y = -0.5;
+
         // Sphere
         const sphere = MeshBuilder.CreateSphere("sphere", {});
         // make sphere invisible
@@ -148,7 +150,7 @@ export class TrailParticlesController {
         this._thirdSpawnPosition = thirdSplinePoints[0];
     }
 
-    private _prepareTrailEffect(spline: Curve3, splineMesh: Mesh, startPosition: Vector3): void {
+    private async _prepareTrailEffect(spline: Curve3, splineMesh: Mesh, startPosition: Vector3) {
         this._sphere.setParent(splineMesh);
         this._sphere.position = startPosition;
 
@@ -173,7 +175,10 @@ export class TrailParticlesController {
         });
     }
 
-    public playTrailEffect(): void {
+    public async playTrailEffect(): Promise<void> {
+        this._defineParticleSystemTrail();
+        this._defineSplinesTrails();
+        await this._prepareTrailEffect(this._firstSpline, this._firstSplineMesh, this._firstSpawnPosition);
         this._trailVfx.start();
     }
 }
