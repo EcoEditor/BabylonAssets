@@ -1,7 +1,7 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Scene, Logger,  Vector3, Mesh, Texture, Color4, PBRMetallicRoughnessMaterial, MeshBuilder, ParticleSystem, Curve3, Path3D, Axis, Space, Material } from "@babylonjs/core";
+import { Scene, Logger,  Vector3, Mesh, Texture, Color4, PBRMetallicRoughnessMaterial, MeshBuilder, ParticleSystem, Curve3, Path3D, Axis, Animation, Space, Material, AnimationGroup } from "@babylonjs/core";
 
 export class TrailParticlesController {
     public scene: Scene;
@@ -37,10 +37,10 @@ export class TrailParticlesController {
         // Sphere
         const sphere = MeshBuilder.CreateSphere("sphere", {});
         // make sphere invisible
-        //sphere.layerMask = 0;
+        sphere.layerMask = 0;
 
         const particleSystem = new ParticleSystem("trail_particles", 1000, this.scene, null, true);
-        particleSystem.particleTexture = new Texture("texture/vfx/Fire_SpriteSheet2_8x8", this.scene, true, false);
+        particleSystem.particleTexture = new Texture("textures/vfx/Fire_SpriteSheet2_8x8.png", this.scene, true, false);
         particleSystem.isAnimationSheetEnabled = true;
         particleSystem.billboardMode = ParticleSystem.BILLBOARDMODE_ALL;
         particleSystem.blendMode = ParticleSystem.BLENDMODE_ADD;
@@ -101,7 +101,7 @@ export class TrailParticlesController {
         firstSplineMesh.position = new Vector3(-2.635, 0, 1.101);
         firstSplineMesh.rotation.y = Math.PI / 4;
         // TODO: Uncomment this line to make line invisible - use gizmoz
-        firstSplineMesh.layerMask = 0;
+        //firstSplineMesh.layerMask = 0;
 
         //Second spline
         var secondSplinePoints: Array<Vector3> = [
@@ -160,26 +160,78 @@ export class TrailParticlesController {
         var path3d = new Path3D(pathPoints);
         var normals = path3d.getNormals();
 
-        var theta = Math.acos(Vector3.Dot(Axis.Z, normals[i]));
+        var theta = Math.acos(Vector3.Dot(Axis.Z, normals[0]));
 
-        var i = 0;
-        this.scene.registerAfterRender(function () {
-            this._sphere.position = this.pathPoints[0];
+        //TODO delete if not used:
+        //var i = 0;
 
-            theta = Math.acos(Vector3.Dot(normals[i], normals[i + 1]));
-            var direction = Vector3.Cross(normals[i], normals[i + 1]).y;
-            var direction = direction / Math.abs(direction);
+        //this.scene.registerAfterRender(function () {
+        //    this._sphere.position = pathPoints[i];
 
-            this._sphere.rotate(Axis.Y, direction * theta, Space.WORLD);
+        //    theta = Math.acos(Vector3.Dot(normals[i], normals[i + 1]));
+        //    var direction = Vector3.Cross(normals[i], normals[i + 1]).y;
+        //    var direction = direction / Math.abs(direction);
 
-            i = (i + 1) % (numberOfPoints - 1);
-        });
+        //    this._sphere.rotate(Axis.Y, direction * theta, Space.WORLD);
+
+        //    i = (i + 1) % (numberOfPoints - 1);
+        //});
+
+        //TODO delete after debugging - currently not used
+        //for (var i = 0; i < numberOfPoints; i++) {
+        //    this.scene.registerAfterRender(function () {
+        //        this._sphere.position = this.pathPoints[i];
+
+        //        theta = Math.acos(Vector3.Dot(normals[i], normals[i + 1]));
+        //        var directionCross = Vector3.Cross(normals[i], normals[i + 1]).y;
+        //        var direction = direction / Math.abs(directionCross);
+
+        //        this._sphere.rotate(Axis.Y, direction * theta, Space.WORLD);
+        //    });
+        //}
+
+        //TODO Animate movement on spline (use if for loop is not working ever....)
+        var animationPosition = new Animation("animationPosition", "position", 30, Animation.ANIMATIONTYPE_VECTOR3, Animation.ANIMATIONLOOPMODE_CYCLE);
+        var animationRotation = new Animation("animationRotation", "rotation", 30, Animation.ANIMATIONTYPE_VECTOR3, Animation.ANIMATIONLOOPMODE_CYCLE);
+
+        // Add binormals and tangets vars for animation
+        var binormals = path3d.getBinormals();
+        var tangents = path3d.getTangents();
+
+
+        var keysPosition = [];
+        var keysRotation = [];
+
+        for (var i = 0; i < numberOfPoints; i++) {
+            keysPosition.push({
+                frame: i,
+                value: spline.getPoints()[i]
+            });
+
+            keysRotation.push({
+                frame: i,
+                value: Vector3.RotationFromAxis(normals[i], binormals[i], tangents[i])
+            });
+        }
+
+        animationPosition.setKeys(keysPosition);
+        animationRotation.setKeys(keysRotation);
+
+        //create the animation group
+        var animationGroup = new AnimationGroup("AnimationGroup");
+        animationGroup.addTargetedAnimation(animationPosition, this._sphere);
+        animationGroup.addTargetedAnimation(animationRotation, this._sphere);
+
+        animationGroup.play(true);
+
+        this._trailVfx.start();
     }
+
+
 
     public async playTrailEffect() {
         this._defineParticleSystemTrail();
         this._defineSplinesTrails();
         await this._prepareTrailEffect(this._firstSpline, this._firstSplineMesh, this._firstSpawnPosition);
-        this._trailVfx.start();
     }
 }

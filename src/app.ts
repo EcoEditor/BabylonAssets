@@ -23,7 +23,7 @@ class App {
         this._scene = new Scene(this._engine);
 
         var camera: ArcRotateCamera = new ArcRotateCamera("Camera", Math.PI / 2, Math.PI / 2, 2, Vector3.Zero(), this._scene);
-        camera.setTarget(Vector3.Zero());
+        camera.attachControl(this._canvas, true);
 
         var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), this._scene);
         // hide/show the Inspector
