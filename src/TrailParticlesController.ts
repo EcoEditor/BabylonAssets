@@ -162,67 +162,19 @@ export class TrailParticlesController {
 
         var theta = Math.acos(Vector3.Dot(Axis.Z, normals[0]));
 
-        //TODO delete if not used:
-        //var i = 0;
+        var i = 0;
 
-        //this.scene.registerAfterRender(function () {
-        //    this._sphere.position = pathPoints[i];
+        this.scene.registerAfterRender(() => {
+            this._sphere.position = pathPoints[i];
 
-        //    theta = Math.acos(Vector3.Dot(normals[i], normals[i + 1]));
-        //    var direction = Vector3.Cross(normals[i], normals[i + 1]).y;
-        //    var direction = direction / Math.abs(direction);
+            theta = Math.acos(Vector3.Dot(normals[i], normals[i + 1]));
+            var direction = Vector3.Cross(normals[i], normals[i + 1]).y;
+            var direction = direction / Math.abs(direction);
 
-        //    this._sphere.rotate(Axis.Y, direction * theta, Space.WORLD);
+            this._sphere.rotate(Axis.Y, direction * theta, Space.WORLD);
 
-        //    i = (i + 1) % (numberOfPoints - 1);
-        //});
-
-        //TODO delete after debugging - currently not used
-        //for (var i = 0; i < numberOfPoints; i++) {
-        //    this.scene.registerAfterRender(function () {
-        //        this._sphere.position = this.pathPoints[i];
-
-        //        theta = Math.acos(Vector3.Dot(normals[i], normals[i + 1]));
-        //        var directionCross = Vector3.Cross(normals[i], normals[i + 1]).y;
-        //        var direction = direction / Math.abs(directionCross);
-
-        //        this._sphere.rotate(Axis.Y, direction * theta, Space.WORLD);
-        //    });
-        //}
-
-        //TODO Animate movement on spline (use if for loop is not working ever....)
-        var animationPosition = new Animation("animationPosition", "position", 30, Animation.ANIMATIONTYPE_VECTOR3, Animation.ANIMATIONLOOPMODE_CYCLE);
-        var animationRotation = new Animation("animationRotation", "rotation", 30, Animation.ANIMATIONTYPE_VECTOR3, Animation.ANIMATIONLOOPMODE_CYCLE);
-
-        // Add binormals and tangets vars for animation
-        var binormals = path3d.getBinormals();
-        var tangents = path3d.getTangents();
-
-
-        var keysPosition = [];
-        var keysRotation = [];
-
-        for (var i = 0; i < numberOfPoints; i++) {
-            keysPosition.push({
-                frame: i,
-                value: spline.getPoints()[i]
-            });
-
-            keysRotation.push({
-                frame: i,
-                value: Vector3.RotationFromAxis(normals[i], binormals[i], tangents[i])
-            });
-        }
-
-        animationPosition.setKeys(keysPosition);
-        animationRotation.setKeys(keysRotation);
-
-        //create the animation group
-        var animationGroup = new AnimationGroup("AnimationGroup");
-        animationGroup.addTargetedAnimation(animationPosition, this._sphere);
-        animationGroup.addTargetedAnimation(animationRotation, this._sphere);
-
-        animationGroup.play(true);
+            i = (i + 1) % (numberOfPoints - 1);
+        });
 
         this._trailVfx.start();
     }

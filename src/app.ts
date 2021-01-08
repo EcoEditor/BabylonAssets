@@ -3,7 +3,8 @@ import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, Logger } from "@babylonjs/core";
 
-import { TrailParticlesController } from "./TrailParticlesController";
+import { TrailParticlesController } from "./trailParticlesController";
+import { AudioController } from "./audioController";
 
 class App {
     // General Entire Application
@@ -13,6 +14,7 @@ class App {
 
     //Game State Related
     private _trailvfx: TrailParticlesController;
+    private _audioController: AudioController;
 
 
 
@@ -47,8 +49,16 @@ class App {
 
     private async _main(): Promise<void> {
         await this._goToStart();
-        await this._trailvfx.playTrailEffect();
-        Logger.Warn("Main is played"); 
+        await this._audioController._loadSound(this._scene);
+        // TODO make audio play - before particle appear
+        //this._audioController.playSoundOnPlayerInput();
+        this._trailvfx.playTrailEffect();
+    }
+
+    private async _goToStart(): Promise<void> {
+        await this._scene.createDefaultXRExperienceAsync({});
+        this._trailvfx = new TrailParticlesController(this._scene);
+        this._audioController = new AudioController(this._scene);
     }
 
     //set up the canvas
@@ -75,10 +85,6 @@ class App {
         document.body.appendChild(this._canvas);
 
         return this._canvas;
-    }
-
-    private async _goToStart(): Promise<void> {
-        this._trailvfx = new TrailParticlesController(this._scene);
     }
 }
 new App();
