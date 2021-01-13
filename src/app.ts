@@ -5,6 +5,7 @@ import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBu
 
 import { TrailParticlesController } from "./trailParticlesController";
 import { AudioController } from "./audioController";
+import { PlayerInput } from "./inputController";
 
 class App {
     // General Entire Application
@@ -15,9 +16,7 @@ class App {
     //Game State Related
     private _trailvfx: TrailParticlesController;
     private _audioController: AudioController;
-
-
-
+    private _input: PlayerInput;
 
     constructor() {
         this._canvas = this._createCanvas();
@@ -50,15 +49,14 @@ class App {
     private async _main(): Promise<void> {
         await this._goToStart();
         await this._audioController._loadSound(this._scene);
-        // TODO make audio play - before particle appear
-        //this._audioController.playSoundOnPlayerInput();
-        this._trailvfx.playTrailEffect();
+        //this._trailvfx.playTrailEffect();
     }
 
     private async _goToStart(): Promise<void> {
         await this._scene.createDefaultXRExperienceAsync({});
         this._trailvfx = new TrailParticlesController(this._scene);
         this._audioController = new AudioController(this._scene);
+        this._input = new PlayerInput(this._scene);
     }
 
     //set up the canvas

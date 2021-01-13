@@ -179,8 +179,6 @@ export class TrailParticlesController {
         this._trailVfx.start();
     }
 
-
-
     public async playTrailEffect() {
         this._defineParticleSystemTrail();
         this._defineSplinesTrails();
