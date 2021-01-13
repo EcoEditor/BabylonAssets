@@ -3,30 +3,26 @@ import { Scene, Vector3, Ray, TransformNode, Mesh, Color3, Color4, UniversalCame
 export class AudioController {
     public scene: Scene;
 
-    private _peraTeleportVo : Sound [];
-    private _audioIndex: number = 0;
+    private _clappingSound: Sound;
 
     constructor(scene: Scene) {
         this.scene = scene;
-        this._loadSound();
     }
 
-    public async _loadSound() {
-        this._peraTeleportVo = [
-            new Sound("peraTeleportVoice1", "./sounds/voiceover/Pera_Teleport1.mp3", this.scene),
-            new Sound("peraTeleportVoice2", "./sounds/voiceover/Pera_Teleport1.mp3", this.scene),
-            new Sound("peraTeleportVoice3", "./sounds/voiceover/Pera_Teleport1.mp3", this.scene)
-        ];
+    public async loadAsync() {
+        var applauseAsync = new Promise<Sound>((resolve) => {
+            //const sound = new Sound("claps", "https://raw.githubusercontent.com/EcoEditor/BabylonRepoForQuestion/master/Board%20Room%20Applause%2001.wav", this.scene, () => { resolve(sound) });
+            const sound = new Sound("claps", "./sounds/voiceover/Pera_Teleport1.mp3", this.scene, () => { resolve(sound) });
+        });
 
-        Logger.Log("sound count is" + this._peraTeleportVo.length);
+        this._clappingSound = await applauseAsync;
     }
 
-    public async checkIfReady() {
-
-    }
-
-    private _playSoundOnPlayerInput(sound: Sound): void {
-        Logger.Warn("sound name is ");
-        sound.play();
+    public async PlaySound() {
+        Logger.Log("sound is ready? " + this._clappingSound.isReady());
+        this._clappingSound.play();
     }
 }
+
+
+

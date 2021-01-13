@@ -1,5 +1,4 @@
 import { Scene, ActionManager, ExecuteCodeAction, Observer, Scalar, Logger } from '@babylonjs/core';
-import { AudioController } from "./audioController";
 
 export class PlayerInput {
     public inputMap: any;
@@ -7,9 +6,6 @@ export class PlayerInput {
     private _scene: Scene;
 
     public jumpKeyDown: boolean;
-
-
-    private _audioController: AudioController;
 
     constructor(scene: Scene) {
         this._scene = scene;
@@ -26,16 +22,11 @@ export class PlayerInput {
         scene.onBeforeRenderObservable.add(() => {
             this._updateFromKeyboard();
         });
-
-        this._audioController = new AudioController(this._scene);
-
     }
 
     private _updateFromKeyboard(): void {
         if ((this.inputMap[" "])) {
             this.jumpKeyDown = true;
-            this._audioController.soundName();
-            Logger.Log("is sound ready? " + this._audioController.soundReady());
         } else {
             this.jumpKeyDown = false;
         }
