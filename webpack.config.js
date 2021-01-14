@@ -20,7 +20,7 @@ module.exports = {
         host: '0.0.0.0',
         port: 8080,
         disableHostCheck: true,
-        contentBase: path.resolve(appDirectory, "public"), //tells webpack to serve from the public folder
+        contentBase: path.resolve(appDirectory, "docs"), //tells webpack to serve from the public folder, [update] public renamed to docs for github pages sake
         publicPath: '/',
         hot: true
     },
@@ -38,7 +38,7 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             inject: true,
-            template: path.resolve(appDirectory, "public/index.html")
+            template: path.resolve(appDirectory, "docs/index.html")
         }),
         new CleanWebpackPlugin()
     ],
