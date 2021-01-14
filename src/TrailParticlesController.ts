@@ -23,9 +23,14 @@ export class TrailParticlesController {
     private _secondSpawnPosition: Vector3;
     private _thirdSpawnPosition: Vector3;
 
+    private _splineIndex: number;
+
     constructor(scene: Scene) {
         this.scene = scene;
+        this._splineIndex = 0;
 
+        this._defineParticleSystemTrail();
+        this._defineSplinesTrails();
     }
 
     private _defineParticleSystemTrail(): void {
@@ -179,9 +184,20 @@ export class TrailParticlesController {
         this._trailVfx.start();
     }
 
+    //TODO learn Type Script
     public async playTrailEffect() {
-        this._defineParticleSystemTrail();
-        this._defineSplinesTrails();
-        await this._prepareTrailEffect(this._firstSpline, this._firstSplineMesh, this._firstSpawnPosition);
+        if (this._splineIndex == 0) {
+            await this._prepareTrailEffect(this._firstSpline, this._firstSplineMesh, this._firstSpawnPosition);
+        } else if (this._splineIndex == 1) {
+            await this._prepareTrailEffect(this._secondSpline, this._secondSplineMesh, this._secondSpawnPosition);
+        } else if (this._splineIndex == 2) {
+            await this._prepareTrailEffect(this._thirdSpline, this._thirdSplineMesh, this._thirdSpawnPosition);
+        }
+
+        this._splineIndex++;
+    }
+
+    public stopParticles(): void {
+        this._trailVfx.stop();
     }
 }

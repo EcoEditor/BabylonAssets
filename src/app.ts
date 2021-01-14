@@ -6,6 +6,7 @@ import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBu
 import { TrailParticlesController } from "./trailParticlesController";
 import { AudioController } from "./audioController";
 import { PlayerInput } from "./inputController";
+import { Player } from "./playerController";
 
 class App {
     // General Entire Application
@@ -17,6 +18,7 @@ class App {
     private _trailvfx: TrailParticlesController;
     private _audioController: AudioController;
     private _input: PlayerInput;
+    private _player: Player;
 
     constructor() {
         this._canvas = this._createCanvas();
@@ -48,8 +50,8 @@ class App {
 
     private async _main(): Promise<void> {
         await this._goToStart();
+        await this._initializeGameAsync(this._scene);
         await this._audioController.loadAsync();
-        await this._audioController.PlaySound();
         //this._trailvfx.playTrailEffect();
     }
 
@@ -58,6 +60,12 @@ class App {
         this._trailvfx = new TrailParticlesController(this._scene);
         this._audioController = new AudioController(this._scene);
         this._input = new PlayerInput(this._scene);
+    }
+
+    //init game
+    private async _initializeGameAsync(scene): Promise<void> {
+        this._player = new Player(this._scene, this._input, this._audioController, this._trailvfx);
+        this._player.beforeRenderUpdate();
     }
 
     //set up the canvas

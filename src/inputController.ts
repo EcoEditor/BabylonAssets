@@ -5,7 +5,8 @@ export class PlayerInput {
 
     private _scene: Scene;
 
-    public jumpKeyDown: boolean;
+    public didStartGame: boolean;
+    public didTeleport: boolean;
 
     constructor(scene: Scene) {
         this._scene = scene;
@@ -18,6 +19,9 @@ export class PlayerInput {
             this.inputMap[evt.sourceEvent.key] = evt.sourceEvent.type == "keydown";
         }));
 
+        this.didStartGame = false;
+        this.didTeleport = false;
+
         //add to the scene an observable that calls updateFromKeyboard before rendering
         scene.onBeforeRenderObservable.add(() => {
             this._updateFromKeyboard();
@@ -26,10 +30,14 @@ export class PlayerInput {
 
     private _updateFromKeyboard(): void {
         if ((this.inputMap[" "])) {
-            this.jumpKeyDown = true;
-        } else {
-            this.jumpKeyDown = false;
+            Logger.Log("space key pressed");
+            this.didStartGame = true;
+        } 
+
+        //TODO apply teleportation behhaviour with this or button click input
+        if (this.inputMap["ArrowRight"]) {
+            Logger.Log("right arrow is pressed");
+            this.didTeleport = true;
         }
     }
-
 }
