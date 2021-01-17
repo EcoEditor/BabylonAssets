@@ -45,7 +45,7 @@ export class TrailParticlesController {
         sphere.layerMask = 0;
 
         const particleSystem = new ParticleSystem("trail_particles", 1000, this.scene, null, true);
-        particleSystem.particleTexture = new Texture("textures/vfx/Fire_SpriteSheet2_8x8.png", this.scene, true, false);
+        particleSystem.particleTexture = new Texture("./textures/vfx/Fire_SpriteSheet2_8x8.png", this.scene, true, false);
         particleSystem.isAnimationSheetEnabled = true;
         particleSystem.billboardMode = ParticleSystem.BILLBOARDMODE_ALL;
         particleSystem.blendMode = ParticleSystem.BLENDMODE_ADD;

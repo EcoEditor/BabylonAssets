@@ -15,8 +15,8 @@ export class AudioController {
         var peraVoice1;
         var peraVoice2;
         var peraVoice3;
+        Logger.Log("Loading sound async");
 
-        //TODO find a way to use for loop
         var peraVoice1Async = new Promise<Sound>((resolve) => {
             const sound = new Sound("Pera_Teleport1", "./sounds/voiceover/Test_Pera_Teleport1.mp3", this.scene, () => { resolve(sound) });
             peraVoice1 = sound;
@@ -52,7 +52,7 @@ export class AudioController {
 
     public async PlaySound() {
         if (this._clipIndex >= this._peraVoice.length) return;
-        Logger.Log("sound is ready? " + this._peraVoice[this._clipIndex].isReady());
+        Logger.Log("sound " + this._clipIndex + "is ready? " + this._peraVoice[this._clipIndex].isReady());
         this._peraVoice[this._clipIndex].play();
     }
 

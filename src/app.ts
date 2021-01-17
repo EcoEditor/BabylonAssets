@@ -51,6 +51,7 @@ class App {
     private async _main(): Promise<void> {
         await this._goToStart();
         await this._initializeGameAsync(this._scene);
+        Logger.Log("from App Main loading sound");
         await this._audioController.loadAsync();
         //this._trailvfx.playTrailEffect();
     }
