@@ -155,6 +155,7 @@ export class TrailParticlesController {
         this._thirdSpawnPosition = thirdSplinePoints[0];
     }
 
+    //TODO: have particles play full trail 
     private async _prepareTrailEffect(spline: Curve3, splineMesh: Mesh, startPosition: Vector3) {
         this._sphere.setParent(splineMesh);
         this._sphere.position = startPosition;
@@ -184,7 +185,7 @@ export class TrailParticlesController {
         this._trailVfx.start();
     }
 
-    //TODO learn Type Script
+    // TODO re-write
     public async playTrailEffect() {
         if (this._splineIndex == 0) {
             await this._prepareTrailEffect(this._firstSpline, this._firstSplineMesh, this._firstSpawnPosition);
@@ -199,5 +200,6 @@ export class TrailParticlesController {
 
     public stopParticles(): void {
         this._trailVfx.stop();
+        this._trailVfx.reset();
     }
 }
