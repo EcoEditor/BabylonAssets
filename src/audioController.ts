@@ -32,7 +32,7 @@ export class AudioController {
             peraVoice3 = sound;
         });
 
-        this._peraVoice = [];
+        this._peraVoice = []; 
 
         peraVoice1 = await peraVoice1Async;
         this._peraVoice.push(peraVoice1);

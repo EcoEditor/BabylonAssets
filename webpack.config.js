@@ -10,7 +10,7 @@ module.exports = {
 		// (Lena) I've added this line from here: https://github.com/johnagan/clean-webpack-plugin#options-and-defaults-optional
 		path: path.resolve(process.cwd(), 'dist'),
         //name for the js file that is created/compiled in memory
-        filename: 'js/hanabiBundle.js'
+        filename: 'js/particleTest.js'
     },
     resolve: {
         // extensions: [".ts"]
